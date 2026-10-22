@@ -62,13 +62,14 @@ export function enhanceHeroLab() {
 				io.observe(p);
 			});
 		}
-		const form = document.getElementById('contact-form');
+		const form = document.getElementById('contact-form') as HTMLFormElement | null;
 		if (form)
 			form.addEventListener('submit', function (e) {
 				e.preventDefault();
 				const n = document.getElementById('form-note');
 				const name = document.getElementById('f-name') as HTMLInputElement | null;
 				const em = document.getElementById('f-email') as HTMLInputElement | null;
+				const btn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
 				if (!n || !name || !em) return;
 				if (!name.value.trim()) {
 					n.textContent = 'Please add your name.';
@@ -82,9 +83,47 @@ export function enhanceHeroLab() {
 					em.focus();
 					return;
 				}
-				n.textContent =
-					'Preview only: this form is not connected yet. On the live site it will send your request to our inbox.';
-				n.className = 'note ok';
+
+				const finish = (text: string, ok: boolean) => {
+					n.textContent = text;
+					n.className = ok ? 'note ok' : 'note';
+					if (btn) {
+						btn.disabled = false;
+						btn.textContent = 'Request a call';
+					}
+				};
+
+				if (import.meta.env.DEV) {
+					finish(
+						'Looks good. After deploy, Netlify will file this under Forms → enquiries.',
+						true
+					);
+					return;
+				}
+
+				if (btn) {
+					btn.disabled = true;
+					btn.textContent = 'Sending…';
+				}
+
+				const body = new URLSearchParams();
+				for (const [key, value] of new FormData(form).entries()) {
+					body.append(key, String(value));
+				}
+
+				void fetch('/', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+					body: body.toString()
+				})
+					.then((res) => {
+						if (!res.ok) throw new Error('submit failed');
+						form.reset();
+						finish("Thanks. We'll reply within one working day.", true);
+					})
+					.catch(() => {
+						finish("Couldn't send just now. Email growth@zentaris.in and we'll pick it up.", false);
+					});
 			});
 	})();
 	(function () {

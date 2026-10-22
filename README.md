@@ -50,7 +50,7 @@ Imports use the `#lib` alias. TypeScript files need the `.ts` suffix (`#lib/seo.
 
 - Homepage is prerendered.
 - `/sitemap.xml` and `/robots.txt` are generated. Demo routes are `noindex`.
-- Contact form is **preview only** — it validates in the browser and does not send mail.
+- Contact form posts to Netlify Forms (`enquiries`). In Netlify: Forms → enquiries, and set a notification to `growth@zentaris.in`.
 - Reduced-motion: Lenis and scroll-text are skipped.
 
 Set `PUBLIC_SITE_URL` (no trailing slash) in production so canonical, Open Graph and sitemap URLs use the live domain.
@@ -61,11 +61,8 @@ Do not invent these. Until they arrive, leave the placeholders.
 
 | Field | Where it shows |
 | --- | --- |
-| Email, phone / WhatsApp, city | Contact |
+| Phone / WhatsApp | Contact |
 | Domain | SEO, sitemap, social cards |
-| Form destination | Contact (inbox, CRM, or stay preview-only) |
-| Founder photo | About |
-| Real case studies (name, image, one true result) | Work |
 | Privacy and terms | Footer (links currently go `#top`) |
 
 ## Brand

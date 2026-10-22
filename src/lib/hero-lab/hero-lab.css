@@ -178,13 +178,14 @@ details p{color:var(--muted);margin-top:.6rem;max-width:60ch;font-size:.95rem}
 .lines div{display:grid;grid-template-columns:140px 1fr;padding-block:.8rem;border-bottom:1px solid var(--rule);font-size:.95rem}
 .lines a{color:inherit;text-underline-offset:.2em}
 .lines span{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:.15rem}
-form{display:grid;gap:1rem;border:1px solid var(--rule);background:var(--surface);padding:clamp(1.25rem,3vw,2rem)}
+form{position:relative;display:grid;gap:1rem;border:1px solid var(--rule);background:var(--surface);padding:clamp(1.25rem,3vw,2rem)}
 .field{display:grid;gap:.4rem}
 .field label{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .field input,.field select,.field textarea{font:inherit;color:var(--text);background:var(--field);border:1px solid var(--rule-2);border-radius:2px;padding:.75rem .85rem;width:100%}
 .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--text)}
 .field textarea{min-height:110px;resize:vertical}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.hp{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .note{font-size:.85rem;color:var(--muted)}
 .note.ok{color:var(--text);font-weight:500}
 @media (max-width:760px){.contact{grid-template-columns:1fr}}
