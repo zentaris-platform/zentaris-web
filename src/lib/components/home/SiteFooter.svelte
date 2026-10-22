@@ -27,9 +27,9 @@
 		</nav>
 		<nav class="zf-col" aria-label="Services">
 			<p class="mono">Services</p>
-			<a href="#build">Tech solutions</a>
-			<a href="#market">Digital marketing</a>
-			<a href="#brand">Branding</a>
+			<a href="#enterprise">Tech solutions</a>
+			<a href="#marketing">Digital marketing</a>
+			<a href="#branding">Branding</a>
 		</nav>
 		<div class="zf-col">
 			<p class="mono">Connect</p>

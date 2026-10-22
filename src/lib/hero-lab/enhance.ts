@@ -96,7 +96,11 @@ export function enhanceHeroLab() {
 		}
 		const faces = ['build', 'market', 'brand'] as const;
 		const map: Record<Face, string> = { build: 't-build', market: 't-market', brand: 't-brand' };
-		const target: Record<Face, string> = { build: '#build', market: '#market', brand: '#brand' };
+		const target: Record<Face, string> = {
+			build: '#enterprise',
+			market: '#marketing',
+			brand: '#branding'
+		};
 		svg.querySelectorAll<SVGGElement>('.mod').forEach((m) => {
 			const n = asKey(m.getAttribute('data-name'), faces);
 			const t = n ? document.getElementById(map[n]) : null;
