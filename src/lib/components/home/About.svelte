@@ -1,5 +1,7 @@
 <script lang="ts">
-	import FounderPhoto from './illustrations/FounderPhoto.svelte';
+	function blockSave(event: MouseEvent) {
+		event.preventDefault();
+	}
 </script>
 
 <section id="about" class="ruled ab2" aria-labelledby="ab-h">
@@ -10,10 +12,14 @@
 		</h2>
 	</div>
 	<div class="in ab2-note">
-		<figure class="ab2-photo">
-			<div class="ab2-ph" role="img" aria-label="Founder photo placeholder">
-				<FounderPhoto />
-				<span class="mono">Founder photo</span>
+		<figure class="ab2-photo" oncontextmenu={blockSave}>
+			<div class="ab2-ph">
+				<enhanced:img
+					src="../../assets/founder/roshini.jpeg"
+					alt="Roshini, founder of Zentaris, seated"
+					sizes="(max-width: 900px) 320px, 420px"
+					draggable="false"
+				/>
 			</div>
 			<figcaption class="mono">Roshini, Founder</figcaption>
 		</figure>

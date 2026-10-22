@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { city, contactEmail, linkedInUrl } from '#lib/seo.ts';
 	import LogoMark from './LogoMark.svelte';
 	import FooterMark from './illustrations/FooterMark.svelte';
 </script>
@@ -33,10 +34,9 @@
 		<div class="zf-col">
 			<p class="mono">Connect</p>
 			<a href="#contact">Start a project</a>
-			<a href="https://www.linkedin.com/company/zentarisin/" target="_blank" rel="noopener"
-				>LinkedIn</a
-			>
-			<span>Based in India, working worldwide</span>
+			<a href="mailto:{contactEmail}">{contactEmail}</a>
+			<a href={linkedInUrl} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+			<span>Based in {city}, working worldwide</span>
 		</div>
 	</div>
 	<div class="zf-mark" aria-hidden="true">

@@ -19,13 +19,13 @@
 
 	onMount(() => enhanceHeroLab());
 
-	const extraJson = $derived(
-		JSON.stringify([websiteSchema(page.url), faqSchema()])
+	const extraJsonLd = $derived(
+		`<script type="application/ld+json">${JSON.stringify([websiteSchema(page.url), faqSchema()])}</script>`
 	);
 </script>
 
 <svelte:head>
-	{@html `<script type="application/ld+json">${extraJson}</script>`}
+	{@html extraJsonLd}
 </svelte:head>
 
 <div class="sheet" id="top">

@@ -1,3 +1,7 @@
+<script lang="ts">
+	import { city, contactEmail } from '#lib/seo.ts';
+</script>
+
 <section id="contact" class="ruled">
 	<div class="in contact">
 		<div>
@@ -8,9 +12,11 @@
 				us.
 			</p>
 			<div class="lines">
-				<div><span>Email</span>[your email]</div>
-				<div><span>Phone / WhatsApp</span>[your number]</div>
-				<div><span>Based in</span>[your city], India</div>
+				<div>
+					<span>Email</span>
+					<a href="mailto:{contactEmail}">{contactEmail}</a>
+				</div>
+				<div><span>Based in</span>{city}, India</div>
 			</div>
 		</div>
 		<form id="contact-form" novalidate>

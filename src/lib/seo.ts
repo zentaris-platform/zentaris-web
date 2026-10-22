@@ -7,6 +7,10 @@ export const defaultDescription =
 
 export const linkedInUrl = 'https://www.linkedin.com/company/zentarisin/';
 
+export const contactEmail = 'growth@zentaris.in';
+
+export const city = 'Chennai';
+
 export const faqItems = [
 	{
 		question: 'How much does a website cost?',
@@ -61,6 +65,14 @@ export function organizationSchema(url: OriginSource) {
 		logo,
 		image: logo,
 		description: defaultDescription,
+		email: contactEmail,
+		address: {
+			'@type': 'PostalAddress',
+			addressLocality: city,
+			addressRegion: 'Tamil Nadu',
+			postalCode: '600011',
+			addressCountry: 'IN'
+		},
 		areaServed: ['IN'],
 		sameAs: [linkedInUrl]
 	};
