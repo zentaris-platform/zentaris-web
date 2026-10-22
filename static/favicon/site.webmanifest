@@ -1,0 +1,15 @@
+{
+  "name": "Zentaris",
+  "short_name": "Zentaris",
+  "description": "One team for software, brand and attention.",
+  "start_url": "/",
+  "id": "/",
+  "lang": "en",
+  "icons": [
+    { "src": "/favicon/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/favicon/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "theme_color": "#00E5C8",
+  "background_color": "#161616",
+  "display": "standalone"
+}
