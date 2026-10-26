@@ -4,6 +4,7 @@
 	import DemoLinks from './demo/DemoLinks.svelte';
 	import { page } from '$app/state';
 	import type { LayoutProps } from './$types';
+	import { bindContactLinks } from '#lib/contact-modal.ts';
 	import { startSmoothScroll, stopSmoothScroll } from '#lib/smooth-scroll.ts';
 	import {
 		absoluteUrl,
@@ -23,8 +24,12 @@
 	const orgJson = $derived(JSON.stringify(organizationSchema(page.url)));
 
 	onMount(() => {
+		const unbindContact = bindContactLinks();
 		startSmoothScroll();
-		return () => stopSmoothScroll();
+		return () => {
+			unbindContact();
+			stopSmoothScroll();
+		};
 	});
 </script>
 
@@ -54,6 +59,9 @@
 	<meta name="twitter:image:alt" content="Zentaris mark" />
 
 	{@html `<script type="application/ld+json">${orgJson}</script>`}
+	{#if import.meta.env.DEV}
+		{@html `<script>(function(){try{var t=localStorage.getItem('zentaris-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}})()</script>`}
+	{/if}
 </svelte:head>
 
 {@render children()}

@@ -1,5 +1,8 @@
 <script lang="ts">
 	import LogoMark from './LogoMark.svelte';
+	import ThemeSwitcher from './ThemeSwitcher.svelte';
+
+	const isDev = import.meta.env.DEV;
 </script>
 
 <header class="nav">
@@ -14,6 +17,9 @@
 			<a href="#process">Process</a>
 			<a href="#work">Work</a>
 			<a href="#faq">FAQ</a>
+			{#if isDev}
+				<ThemeSwitcher />
+			{/if}
 			<a class="btn btn-2" href="#contact">Book a call</a>
 		</nav>
 	</div>

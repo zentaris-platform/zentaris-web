@@ -1,5 +1,6 @@
 /** Client enhancements ported from zentaris-hero-lab/index.html */
 
+import { openContactModal } from '../contact-modal.ts';
 import { scrollToTarget } from '../smooth-scroll.ts';
 import { enhanceScrollText } from '../scroll-text.ts';
 
@@ -240,11 +241,10 @@ export function enhanceHeroLab() {
 		const reduce = prefersReducedMotion();
 		if (!reduce) svg.classList.add('intro');
 		const layers = ['core', 'brand', 'market', 'launch'] as const;
-		const go: Record<Layer, string> = {
+		const go: Record<Exclude<Layer, 'launch'>, string> = {
 			core: '#approach',
 			brand: '#branding',
-			market: '#marketing',
-			launch: '#contact'
+			market: '#marketing'
 		};
 		svg.querySelectorAll<SVGGElement>('.plate').forEach((m) => {
 			const n = asKey(m.getAttribute('data-name'), layers);
@@ -263,6 +263,10 @@ export function enhanceHeroLab() {
 			m.addEventListener('blur', off);
 			function nav() {
 				if (!n) return;
+				if (n === 'launch') {
+					openContactModal();
+					return;
+				}
 				const el = document.querySelector(go[n]);
 				if (el) scrollToTarget(el, reduce);
 			}
@@ -500,7 +504,7 @@ export function enhanceHeroLab() {
 		});
 		if (!L.launch?.mod || !L.market?.body || !L.brand?.body || !L.core) return;
 		const column = boxEls(L.launch.mod);
-		const extras = [...svg.querySelectorAll<SVGElement>('.gap, .tag, .tag-lead')];
+		const extras = [...svg.querySelectorAll<SVGElement>('.gap, .layer-tags, .tag, .tag-lead')];
 
 		// ---- IDP-style board: 7x7 cells around the flattened block, tool tiles pop in by ring
 		const firstPlate = svg.querySelector('.plate-wrap');
@@ -579,11 +583,12 @@ export function enhanceHeroLab() {
 				pts([P(x0, y0, h), P(x0 + s, y0, h), P(x0 + s, y0 + s, h), P(x0, y0 + s, h)]) +
 				'"/>' +
 				'<g class="idp-ico" transform="matrix(' +
-				[C * U * s * 0.6 / 100, S * U * s * 0.6 / 100, -C * U * s * 0.6 / 100, S * U * s * 0.6 / 100]
-					.map(function (v) {
-						return v.toFixed(4);
-					})
-					.join(',') +
+				[
+					((C * U * s * 0.6) / 100).toFixed(4),
+					((S * U * s * 0.6) / 100).toFixed(4),
+					((-C * U * s * 0.6) / 100).toFixed(4),
+					((S * U * s * 0.6) / 100).toFixed(4)
+				].join(',') +
 				',' +
 				P(x0 + s * 0.2, y0 + s * 0.2, h)
 					.map(function (v) {
@@ -715,7 +720,7 @@ export function enhanceHeroLab() {
 			render(A.hold[0] + 3);
 			return;
 		}
-		let acc = 0;
+		let acc = A.hold[0];
 		let last: number | null = null;
 		let paused = false;
 		let visible = true;
@@ -826,6 +831,23 @@ export function enhanceHeroLab() {
 		const cards = [...sec.querySelectorAll<HTMLElement>('.wk2-card')];
 		const empty = sec.querySelector<HTMLElement>('.wk2-empty');
 		if (!empty) return;
+		const stages = [...sec.querySelectorAll<HTMLElement>('.wk2-ph-shot')];
+		const reduce = prefersReducedMotion();
+
+		function setPlaying(stage: HTMLElement, on: boolean) {
+			const video = stage.querySelector<HTMLVideoElement>('.wk2-vid');
+			if (!video) return;
+			if (on) {
+				stage.classList.add('on');
+				void video.play().catch(() => {
+					stage.classList.remove('on');
+				});
+			} else {
+				stage.classList.remove('on');
+				video.pause();
+			}
+		}
+
 		pills.forEach(function (p) {
 			p.addEventListener('click', function () {
 				const f = p.getAttribute('data-f');
@@ -838,12 +860,31 @@ export function enhanceHeroLab() {
 					const show = f === 'all' || c.getAttribute('data-cat') === f;
 					c.hidden = !show;
 					if (show) n++;
+					else {
+						const stage = c.querySelector<HTMLElement>('.wk2-ph-shot');
+						if (stage) setPlaying(stage, false);
+					}
 				});
 				empty.hidden = n > 0;
 				if (!n)
 					empty.textContent =
 						'No ' + p.textContent?.toLowerCase() + " projects yet. They're added here as they launch.";
 			});
+		});
+
+		if (reduce) return;
+		const io = new IntersectionObserver(
+			function (entries) {
+				entries.forEach(function (entry) {
+					const stage = entry.target as HTMLElement;
+					const card = stage.closest<HTMLElement>('.wk2-card');
+					setPlaying(stage, entry.isIntersecting && !card?.hidden);
+				});
+			},
+			{ threshold: 0.45 }
+		);
+		stages.forEach(function (stage) {
+			io.observe(stage);
 		});
 	})();
 	enhanceScrollText();

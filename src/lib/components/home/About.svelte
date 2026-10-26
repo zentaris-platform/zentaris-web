@@ -20,8 +20,13 @@
 					sizes="(max-width: 900px) 320px, 420px"
 					draggable="false"
 				/>
+				<span class="ab2-ph-c ab2-ph-c-tl" aria-hidden="true"></span>
+				<span class="ab2-ph-c ab2-ph-c-br" aria-hidden="true"></span>
 			</div>
-			<figcaption class="mono">Roshini, Founder</figcaption>
+			<figcaption class="mono">
+				<b>Roshini</b>
+				<span>Founder</span>
+			</figcaption>
 		</figure>
 		<div class="ab2-letter">
 			<p class="ab2-k">Our story</p>

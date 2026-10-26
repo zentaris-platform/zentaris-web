@@ -22,11 +22,23 @@
 				aria-label="Akiiko — live store (opens in a new tab)"
 			>
 				<div class="wk2-ph wk2-ph-shot wk2-ph-akiiko">
+					<video
+						class="wk2-vid"
+						muted
+						playsinline
+						loop
+						preload="metadata"
+						aria-hidden="true"
+					>
+						<source src="/work/zentaris-work-akiiko.mp4" type="video/mp4" />
+					</video>
 					<enhanced:img
+						class="wk2-poster"
 						src="../../assets/work/akiiko-puff.png"
-						alt="Akiiko Sweet Puff vanity pouches in three sizes"
+						alt=""
 						sizes="(max-width: 900px) 100vw, 58vw"
 					/>
+					<span class="wk2-play" aria-hidden="true"></span>
 				</div>
 				<div class="wk2-body">
 					<p class="mono wk2-client">Akiiko</p>
@@ -47,11 +59,23 @@
 				aria-label="Royalfurr — live store (opens in a new tab)"
 			>
 				<div class="wk2-ph wk2-ph-shot wk2-ph-royalfurr">
+					<video
+						class="wk2-vid"
+						muted
+						playsinline
+						loop
+						preload="metadata"
+						aria-hidden="true"
+					>
+						<source src="/work/zentaris-work-royalfurr.mp4" type="video/mp4" />
+					</video>
 					<enhanced:img
+						class="wk2-poster"
 						src="../../assets/work/royalfurr-banner.jpg"
-						alt="Royalfurr dog food pouches with a poodle at a dining table"
+						alt=""
 						sizes="(max-width: 900px) 100vw, 38vw"
 					/>
+					<span class="wk2-play" aria-hidden="true"></span>
 				</div>
 				<div class="wk2-body">
 					<p class="mono wk2-client">Royalfurr</p>
@@ -72,11 +96,23 @@
 				aria-label="Aatchiyar Kalvi — live exam platform (opens in a new tab)"
 			>
 				<div class="wk2-ph wk2-ph-shot wk2-ph-aatchiyar">
+					<video
+						class="wk2-vid"
+						muted
+						playsinline
+						loop
+						preload="metadata"
+						aria-hidden="true"
+					>
+						<source src="/work/zentaris-work-aatchiyar.mp4" type="video/mp4" />
+					</video>
 					<enhanced:img
+						class="wk2-poster"
 						src="../../assets/work/aatchiyar-hero.png"
-						alt="Aatchiyar Kalvi homepage: mock tests for TNPSC, RRB, SSC and Banking"
+						alt=""
 						sizes="(max-width: 900px) 100vw, 38vw"
 					/>
+					<span class="wk2-play" aria-hidden="true"></span>
 				</div>
 				<div class="wk2-body">
 					<p class="mono wk2-client">Aatchiyar Kalvi</p>

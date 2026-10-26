@@ -15,6 +15,7 @@
 	import About from '#lib/components/home/About.svelte';
 	import Faq from '#lib/components/home/Faq.svelte';
 	import Contact from '#lib/components/home/Contact.svelte';
+	import ContactModal from '#lib/components/home/ContactModal.svelte';
 	import SiteFooter from '#lib/components/home/SiteFooter.svelte';
 
 	onMount(() => enhanceHeroLab());
@@ -40,4 +41,5 @@
 	<Faq />
 	<Contact />
 	<SiteFooter />
+	<ContactModal />
 </div>

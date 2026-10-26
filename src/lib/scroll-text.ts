@@ -1,12 +1,6 @@
 import { onSmoothScroll } from './smooth-scroll.ts';
 
-const SELECTOR = [
-	'.hero h1',
-	'.hero .sub',
-	'.sheet section h2',
-	'.wd-state h3',
-	'.wd-panel h3'
-].join(',');
+const SELECTOR = ['.sheet section h2', '.wd-state h3', '.wd-panel h3'].join(',');
 
 function clamp(n: number): number {
 	return n < 0 ? 0 : n > 1 ? 1 : n;
