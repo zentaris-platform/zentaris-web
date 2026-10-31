@@ -23,6 +23,7 @@ type LayerState = {
 declare global {
 	interface Window {
 		__stackSeek?: (t: number) => void;
+		__stackPause?: (on: boolean) => void;
 		__stackPhases?: Record<string, [number, number]>;
 	}
 }
@@ -723,6 +724,7 @@ export function enhanceHeroLab() {
 		let acc = A.hold[0];
 		let last: number | null = null;
 		let paused = false;
+		let loopLocked = false;
 		let visible = true;
 		svg.addEventListener('pointerenter', function () {
 			if (svg.classList.contains('is-open')) paused = true;
@@ -739,13 +741,16 @@ export function enhanceHeroLab() {
 			if (last === null) last = now;
 			const dt = Math.min(0.05, (now - last) / 1000);
 			last = now;
-			if (!paused && visible) acc = (acc + dt) % LOOP;
+			if (!paused && !loopLocked && visible) acc = (acc + dt) % LOOP;
 			render(acc);
 			requestAnimationFrame(frame);
 		}
 		window.__stackSeek = function (t) {
 			acc = t;
 			render(t);
+		};
+		window.__stackPause = function (on) {
+			loopLocked = on;
 		};
 		window.__stackPhases = A;
 		render(0);
@@ -886,6 +891,129 @@ export function enhanceHeroLab() {
 		stages.forEach(function (stage) {
 			io.observe(stage);
 		});
+	})();
+	(function () {
+		const sec = document.querySelector<HTMLElement>('.hero-x');
+		if (!sec) return;
+		const grid = sec.querySelector<HTMLElement>('.hx-grid');
+		const art = sec.querySelector<HTMLElement>('.hx-art');
+		const copy = sec.querySelector<HTMLElement>('.hx-copy');
+		const nav = document.querySelector<HTMLElement>('.nav');
+		if (!grid || !art || !copy) return;
+		const kids = [...copy.children] as HTMLElement[];
+		const h1b = copy.querySelector<HTMLElement>('h1 .h1-2');
+		const reduce = prefersReducedMotion();
+		const mq = window.matchMedia('(max-width: 760px)');
+		let on = false;
+		let hint: HTMLElement | null = null;
+		let steps: HTMLElement | null = null;
+		const seq = [kids[0], kids[1], h1b, kids[2], kids[3], kids[4]].filter(
+			(el): el is HTMLElement => Boolean(el)
+		);
+		let T_END = 0;
+		function phases() {
+			const PH = window.__stackPhases;
+			if (PH?.hold) T_END = PH.hold[0] + 2.4;
+			return !!PH;
+		}
+		function enable() {
+			if (on || !phases()) return;
+			on = true;
+			sec.classList.add('hx-scroll');
+			window.__stackPause?.(true);
+			hint = document.createElement('div');
+			hint.className = 'hx-hint';
+			hint.innerHTML = 'Scroll<i></i>';
+			grid.appendChild(hint);
+			steps = document.createElement('div');
+			steps.className = 'hx-steps';
+			steps.setAttribute('aria-hidden', 'true');
+			steps.innerHTML = '<b></b><b></b><b></b><b></b>';
+			grid.appendChild(steps);
+			measure();
+			update();
+		}
+		function disable() {
+			if (!on) return;
+			on = false;
+			sec.classList.remove('hx-scroll');
+			sec.style.removeProperty('--hx-h');
+			art.style.transform = '';
+			seq.forEach(function (e) {
+				e.classList.remove('on');
+			});
+			hint?.remove();
+			steps?.remove();
+			hint = null;
+			steps = null;
+			window.__stackPause?.(false);
+		}
+		let H = 0;
+		let AH = 0;
+		let CH = 0;
+		let TOP = 60;
+		function measure() {
+			TOP = nav ? nav.getBoundingClientRect().height : 60;
+			sec.style.setProperty('--hx-top', TOP + 'px');
+			H = window.innerHeight - TOP;
+			const scale = parseFloat((art.style.transform.match(/scale\(([\d.]+)\)/) || [0, '1'])[1]) || 1;
+			AH = art.getBoundingClientRect().height / scale;
+			CH = copy.getBoundingClientRect().height;
+			sec.style.setProperty('--hx-h', window.innerHeight * 2.6 + 'px');
+		}
+		function clamp(v: number) {
+			return v < 0 ? 0 : v > 1 ? 1 : v;
+		}
+		function ease(u: number) {
+			return u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
+		}
+		function update() {
+			if (!on) return;
+			const r = sec.getBoundingClientRect();
+			const span = r.height - (window.innerHeight - TOP);
+			const p = clamp((TOP - r.top) / Math.max(1, span));
+			const tp = clamp(p / 0.62);
+			window.__stackSeek?.(tp * T_END);
+			const m = ease(clamp((p - 0.55) / 0.17));
+			const s0 = Math.min(1, (H - 24) / AH);
+			const s1 = Math.max(0.42, Math.min(0.75, (H - CH - 36) / AH));
+			const s = s0 + (s1 - s0) * m;
+			const y0 = Math.max(0, (H - AH * s0) / 2);
+			const y = y0 + (4 - y0) * m;
+			art.style.transform = 'translateY(' + y.toFixed(1) + 'px) scale(' + s.toFixed(4) + ')';
+			seq.forEach(function (e, i) {
+				e.classList.toggle('on', p >= 0.7 + i * 0.045);
+			});
+			if (hint) hint.style.opacity = p < 0.04 ? '1' : '0';
+			if (steps) {
+				let k = tp < 0.25 ? 0 : tp < 0.6 ? 1 : tp < 0.85 ? 2 : 3;
+				if (p >= 0.7) k = 4;
+				[...steps.children].forEach(function (b, i) {
+					b.classList.toggle('on', i < k);
+				});
+				steps.style.opacity = p > 0.97 ? '0' : '1';
+			}
+		}
+		function check() {
+			if (mq.matches && !reduce) enable();
+			else disable();
+		}
+		window.addEventListener(
+			'scroll',
+			function () {
+				requestAnimationFrame(update);
+			},
+			{ passive: true }
+		);
+		window.addEventListener('resize', function () {
+			check();
+			if (on) {
+				measure();
+				update();
+			}
+		});
+		mq.addEventListener('change', check);
+		check();
 	})();
 	enhanceScrollText();
 }

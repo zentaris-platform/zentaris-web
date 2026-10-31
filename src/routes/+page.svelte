@@ -8,6 +8,7 @@
 	import Problem from '#lib/components/home/Problem.svelte';
 	import WhatWeDo from '#lib/components/home/WhatWeDo.svelte';
 	import Services from '#lib/components/home/Services.svelte';
+	import Stack from '#lib/components/home/Stack.svelte';
 	import HowWeThink from '#lib/components/home/HowWeThink.svelte';
 	import Approach from '#lib/components/home/Approach.svelte';
 	import Process from '#lib/components/home/Process.svelte';
@@ -33,6 +34,7 @@
 	<Problem />
 	<WhatWeDo />
 	<Services />
+	<Stack />
 	<HowWeThink />
 	<Approach />
 	<Process />

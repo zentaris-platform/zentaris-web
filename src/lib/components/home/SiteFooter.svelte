@@ -22,6 +22,7 @@
 			<a href="#services">Services</a>
 			<a href="#approach">Approach</a>
 			<a href="#process">Process</a>
+			<a href="#stack">Stack</a>
 			<a href="#work">Work</a>
 			<a href="#faq">FAQ</a>
 		</nav>
