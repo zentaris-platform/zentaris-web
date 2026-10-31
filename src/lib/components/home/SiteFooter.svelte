@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { city, contactEmail, linkedInUrl } from '#lib/seo.ts';
+	import { city, contactEmail, contactPhone, contactPhoneHref, linkedInUrl } from '#lib/seo.ts';
 	import LogoMark from './LogoMark.svelte';
 	import FooterMark from './illustrations/FooterMark.svelte';
 </script>
@@ -36,6 +36,7 @@
 			<p class="mono">Connect</p>
 			<a href="#contact">Start a project</a>
 			<a href="mailto:{contactEmail}">{contactEmail}</a>
+			<a href={contactPhoneHref}>{contactPhone}</a>
 			<a href={linkedInUrl} target="_blank" rel="noopener noreferrer">LinkedIn</a>
 			<span>Based in {city}, working worldwide</span>
 		</div>

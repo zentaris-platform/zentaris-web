@@ -3,11 +3,11 @@
 </script>
 
 <section class="hero hero-x hero-grid">
-	<div class="hg-bg" aria-hidden="true">
-		<svg class="hg-svg hg-base"></svg>
-		<svg class="hg-svg hg-spot"></svg>
-	</div>
 	<div class="in hx-grid">
+		<div class="hg-bg" aria-hidden="true">
+			<svg class="hg-svg hg-base"></svg>
+			<svg class="hg-svg hg-spot"></svg>
+		</div>
 		<div class="hx-copy">
 			<p class="mono label">Software · Brand · Attention</p>
 			<h1>Three sides. <span class="h1-2">One team.</span></h1>

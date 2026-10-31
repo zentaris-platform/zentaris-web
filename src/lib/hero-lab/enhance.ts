@@ -1,7 +1,7 @@
 /** Client enhancements ported from zentaris-hero-lab/index.html */
 
 import { openContactModal } from '../contact-modal.ts';
-import { scrollToTarget } from '../smooth-scroll.ts';
+import { onSmoothScroll, scrollToTarget } from '../smooth-scroll.ts';
 import { enhanceScrollText } from '../scroll-text.ts';
 
 type Face = 'build' | 'market' | 'brand';
@@ -25,6 +25,7 @@ declare global {
 		__stackSeek?: (t: number) => void;
 		__stackPause?: (on: boolean) => void;
 		__stackPhases?: Record<string, [number, number]>;
+		__heroGridBuild?: () => void;
 	}
 }
 
@@ -85,6 +86,17 @@ export function enhanceHeroLab() {
 					em.focus();
 					return;
 				}
+				const picked = form.querySelectorAll<HTMLInputElement>('input[name="services"]:checked');
+				const message = document.getElementById('f-msg') as HTMLTextAreaElement | null;
+				const dropdown = form.querySelector('.dd');
+				if (!picked.length && !message?.value.trim()) {
+					n.textContent = 'Choose an area from the dropdown, or tell us what you have in mind.';
+					n.className = 'note';
+					dropdown?.classList.add('is-error');
+					form.querySelector<HTMLButtonElement>('.dd-trigger')?.focus();
+					return;
+				}
+				dropdown?.classList.remove('is-error');
 
 				const finish = (text: string, ok: boolean) => {
 					n.textContent = text;
@@ -373,6 +385,7 @@ export function enhanceHeroLab() {
 			base.innerHTML = out;
 			spot.innerHTML = out;
 		}
+		window.__heroGridBuild = build;
 		build();
 		addEventListener('load', build);
 		let rt: ReturnType<typeof setTimeout>;
@@ -907,6 +920,7 @@ export function enhanceHeroLab() {
 		let on = false;
 		let hint: HTMLElement | null = null;
 		let steps: HTMLElement | null = null;
+		let wait = 0;
 		const seq = [kids[0], kids[1], h1b, kids[2], kids[3], kids[4]].filter(
 			(el): el is HTMLElement => Boolean(el)
 		);
@@ -920,6 +934,7 @@ export function enhanceHeroLab() {
 			if (on || !phases()) return;
 			on = true;
 			sec.classList.add('hx-scroll');
+			sec.style.setProperty('--hx-scrim', '0');
 			window.__stackPause?.(true);
 			hint = document.createElement('div');
 			hint.className = 'hx-hint';
@@ -930,15 +945,32 @@ export function enhanceHeroLab() {
 			steps.setAttribute('aria-hidden', 'true');
 			steps.innerHTML = '<b></b><b></b><b></b><b></b>';
 			grid.appendChild(steps);
+			window.__heroGridBuild?.();
 			measure();
 			update();
+			requestAnimationFrame(function () {
+				if (!on) return;
+				measure();
+				update();
+			});
+			if (document.fonts?.ready) {
+				void document.fonts.ready.then(function () {
+					if (!on) return;
+					window.__heroGridBuild?.();
+					measure();
+					update();
+				});
+			}
 		}
 		function disable() {
 			if (!on) return;
 			on = false;
 			sec.classList.remove('hx-scroll');
 			sec.style.removeProperty('--hx-h');
+			sec.style.removeProperty('--hx-scrim');
+			sec.style.removeProperty('--hx-top');
 			art.style.transform = '';
+			art.style.opacity = '';
 			seq.forEach(function (e) {
 				e.classList.remove('on');
 			});
@@ -947,6 +979,7 @@ export function enhanceHeroLab() {
 			hint = null;
 			steps = null;
 			window.__stackPause?.(false);
+			window.__heroGridBuild?.();
 		}
 		let H = 0;
 		let AH = 0;
@@ -957,7 +990,7 @@ export function enhanceHeroLab() {
 			sec.style.setProperty('--hx-top', TOP + 'px');
 			H = window.innerHeight - TOP;
 			const scale = parseFloat((art.style.transform.match(/scale\(([\d.]+)\)/) || [0, '1'])[1]) || 1;
-			AH = art.getBoundingClientRect().height / scale;
+			AH = art.getBoundingClientRect().height / scale || 1;
 			CH = copy.getBoundingClientRect().height;
 			sec.style.setProperty('--hx-h', window.innerHeight * 2.6 + 'px');
 		}
@@ -976,11 +1009,16 @@ export function enhanceHeroLab() {
 			window.__stackSeek?.(tp * T_END);
 			const m = ease(clamp((p - 0.55) / 0.17));
 			const s0 = Math.min(1, (H - 24) / AH);
-			const s1 = Math.max(0.42, Math.min(0.75, (H - CH - 36) / AH));
+			const fit = (H - CH - 28) / AH;
+			let s1 = Math.min(0.75, fit);
+			const hide = fit < 0.38;
+			if (hide) s1 = Math.max(0.3, Math.min(0.5, fit + 0.12));
 			const s = s0 + (s1 - s0) * m;
 			const y0 = Math.max(0, (H - AH * s0) / 2);
 			const y = y0 + (4 - y0) * m;
 			art.style.transform = 'translateY(' + y.toFixed(1) + 'px) scale(' + s.toFixed(4) + ')';
+			art.style.opacity = hide ? (1 - clamp((p - 0.62) / 0.1)).toFixed(3) : '1';
+			sec.style.setProperty('--hx-scrim', clamp((p - 0.66) / 0.06).toFixed(3));
 			seq.forEach(function (e, i) {
 				e.classList.toggle('on', p >= 0.7 + i * 0.045);
 			});
@@ -995,16 +1033,18 @@ export function enhanceHeroLab() {
 			}
 		}
 		function check() {
-			if (mq.matches && !reduce) enable();
-			else disable();
+			if (mq.matches && !reduce) {
+				if (!on && !phases()) {
+					if (wait++ < 90) requestAnimationFrame(check);
+					return;
+				}
+				enable();
+			} else disable();
 		}
-		window.addEventListener(
-			'scroll',
-			function () {
-				requestAnimationFrame(update);
-			},
-			{ passive: true }
-		);
+		function onScroll() {
+			requestAnimationFrame(update);
+		}
+		onSmoothScroll(onScroll);
 		window.addEventListener('resize', function () {
 			check();
 			if (on) {

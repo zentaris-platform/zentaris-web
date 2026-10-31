@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { city, contactEmail } from '#lib/seo.ts';
+	import { city, contactEmail, contactPhone, contactPhoneHref } from '#lib/seo.ts';
 </script>
 
 <section id="contact" class="ruled">
@@ -15,6 +15,10 @@
 				<div>
 					<span>Email</span>
 					<a href="mailto:{contactEmail}">{contactEmail}</a>
+				</div>
+				<div>
+					<span>Phone / WhatsApp</span>
+					<a href={contactPhoneHref}>{contactPhone}</a>
 				</div>
 				<div><span>Based in</span>{city}, India</div>
 			</div>

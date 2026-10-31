@@ -9,6 +9,10 @@ export const linkedInUrl = 'https://www.linkedin.com/company/zentarisin/';
 
 export const contactEmail = 'growth@zentaris.in';
 
+export const contactPhone = '+91 877 886 2157';
+
+export const contactPhoneHref = 'tel:+918778862157';
+
 export const city = 'Chennai';
 
 export const faqItems = [
@@ -66,6 +70,7 @@ export function organizationSchema(url: OriginSource) {
 		image: logo,
 		description: defaultDescription,
 		email: contactEmail,
+		telephone: contactPhoneHref.replace('tel:', ''),
 		address: {
 			'@type': 'PostalAddress',
 			addressLocality: city,
