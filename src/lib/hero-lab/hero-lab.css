@@ -5081,13 +5081,6 @@ footer a:hover {
 .wk2-feat .wk2-body h3 {
 	font-size: clamp(1.3rem, 2.2vw, 1.75rem);
 }
-.wk2-line {
-	margin: 0;
-	max-width: 42ch;
-	font-size: 0.92rem;
-	line-height: 1.45;
-	color: var(--muted);
-}
 .wk2-foot {
 	display: flex;
 	justify-content: space-between;
