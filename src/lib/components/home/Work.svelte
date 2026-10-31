@@ -43,6 +43,7 @@
 				<div class="wk2-body">
 					<p class="mono wk2-client">Akiiko</p>
 					<h3>Soft totes, pouches and self-care essentials</h3>
+					<p class="wk2-line">Thoughtful design. A seamless shopping experience.</p>
 					<div class="wk2-foot">
 						<span class="mono wk2-tag">Website · Brand</span>
 						<span class="wk2-metric"><b>Live</b><span>store</span></span>
@@ -80,6 +81,7 @@
 				<div class="wk2-body">
 					<p class="mono wk2-client">Royalfurr</p>
 					<h3>Freshly cooked, human-grade dog food</h3>
+					<p class="wk2-line">Good food deserves a better digital experience.</p>
 					<div class="wk2-foot">
 						<span class="mono wk2-tag">Website · Commerce</span>
 						<span class="wk2-metric"><b>Live</b><span>store</span></span>
@@ -117,6 +119,7 @@
 				<div class="wk2-body">
 					<p class="mono wk2-client">Aatchiyar Kalvi</p>
 					<h3>Exam prep for TNPSC, RRB, SSC and Banking</h3>
+					<p class="wk2-line">Making learning more accessible, one step at a time.</p>
 					<div class="wk2-foot">
 						<span class="mono wk2-tag">Web app · Ed-tech</span>
 						<span class="wk2-metric"><b>Live</b><span>platform</span></span>

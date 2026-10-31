@@ -12,9 +12,13 @@ function createLenis(): Lenis {
 	return new Lenis({
 		autoRaf: true,
 		anchors: true,
-		autoToggle: true,
 		allowNestedScroll: true,
-		stopInertiaOnNavigate: true
+		stopInertiaOnNavigate: true,
+		overscroll: false,
+		lerp: 0.18,
+		wheelMultiplier: 1,
+		touchMultiplier: 1.15,
+		syncTouchLerp: 0.14
 	});
 }
 
@@ -48,11 +52,21 @@ export function getLenis(): Lenis | null {
 }
 
 export function onSmoothScroll(fn: () => void): () => void {
-	const offLenis = lenis?.on('scroll', fn);
-	addEventListener('scroll', fn, { passive: true });
+	let raf = 0;
+	const tick = () => {
+		raf = 0;
+		fn();
+	};
+	const on = () => {
+		if (raf) return;
+		raf = requestAnimationFrame(tick);
+	};
+	const offLenis = lenis?.on('scroll', on);
+	addEventListener('scroll', on, { passive: true });
 	return () => {
 		offLenis?.();
-		removeEventListener('scroll', fn);
+		removeEventListener('scroll', on);
+		if (raf) cancelAnimationFrame(raf);
 	};
 }
 

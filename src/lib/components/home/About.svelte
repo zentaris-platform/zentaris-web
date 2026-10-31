@@ -31,13 +31,16 @@
 		<div class="ab2-letter">
 			<p class="ab2-k">Our story</p>
 			<p class="ab2-lead">
-				Our founder, Roshini, spent years in the corporate world. She kept seeing the same thing.
+				What if the problem isn't that businesses lack opportunities, but that they don't always know
+				how to reach them?
 			</p>
 			<p>
-				Businesses knew what they wanted to achieve, and the market was full of openings, but nobody
-				was connecting the two.
+				That question stayed with me throughout my years in the corporate world. I saw the distance
+				between having an ambition and having the right people, tools, and thinking to pursue it.
 			</p>
-			<p>So she started Zentaris to close those gaps.</p>
+			<p>
+				Zentaris started with a simple belief: the right connections can change what's possible.
+			</p>
 			<div class="ab2-sign">
 				<p>
 					<b>Roshini, Founder</b><span

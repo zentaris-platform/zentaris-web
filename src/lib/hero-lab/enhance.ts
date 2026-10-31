@@ -1041,10 +1041,7 @@ export function enhanceHeroLab() {
 				enable();
 			} else disable();
 		}
-		function onScroll() {
-			requestAnimationFrame(update);
-		}
-		onSmoothScroll(onScroll);
+		onSmoothScroll(update);
 		window.addEventListener('resize', function () {
 			check();
 			if (on) {

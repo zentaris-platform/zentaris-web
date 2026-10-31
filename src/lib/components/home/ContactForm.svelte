@@ -28,11 +28,34 @@
 		}
 	] as const;
 
+	const stages = [
+		{
+			title: 'I have an idea',
+			detail: 'Looking to turn an idea into reality.'
+		},
+		{
+			title: "I'm starting a business",
+			detail: 'Need a website, brand, or digital presence.'
+		},
+		{
+			title: "I'm growing a business",
+			detail: 'Looking to expand with technology and marketing.'
+		},
+		{
+			title: "I'm an established enterprise",
+			detail: 'Need complex technology and strategic solutions.'
+		}
+	] as const;
+
 	let open = $state(false);
+	let stageOpen = $state(false);
 	let picked = $state<string[]>([]);
+	let stage = $state('');
 	let root: HTMLElement | undefined;
+	let stageRoot: HTMLElement | undefined;
 
 	const emptyLabel = 'Select one or more areas';
+	const emptyStage = 'Select a stage';
 	const summary = $derived(
 		picked.length === 0
 			? emptyLabel
@@ -40,24 +63,45 @@
 				? picked[0]
 				: `${picked[0]} +${picked.length - 1} more`
 	);
+	const stageSummary = $derived(stage || emptyStage);
 
 	function toggle(value: string, checked: boolean) {
 		picked = checked ? [...picked, value] : picked.filter((item) => item !== value);
 		root?.classList.remove('is-error');
 	}
 
+	function pickStage(value: string) {
+		stage = value;
+		stageOpen = false;
+	}
+
+	function toggleServices() {
+		open = !open;
+		if (open) stageOpen = false;
+	}
+
+	function toggleStage() {
+		stageOpen = !stageOpen;
+		if (stageOpen) open = false;
+	}
+
 	function onReset() {
 		picked = [];
+		stage = '';
 		open = false;
+		stageOpen = false;
 	}
 
 	onMount(() => {
 		function onDocClick(event: MouseEvent) {
-			if (!open || !root) return;
-			if (!root.contains(event.target as Node)) open = false;
+			const target = event.target as Node;
+			if (open && root && !root.contains(target)) open = false;
+			if (stageOpen && stageRoot && !stageRoot.contains(target)) stageOpen = false;
 		}
 		function onKey(event: KeyboardEvent) {
-			if (event.key === 'Escape' && open) open = false;
+			if (event.key !== 'Escape') return;
+			if (open) open = false;
+			if (stageOpen) stageOpen = false;
 		}
 		document.addEventListener('click', onDocClick);
 		document.addEventListener('keydown', onKey);
@@ -108,7 +152,7 @@
 			aria-expanded={open}
 			aria-controls="dd-panel"
 			aria-labelledby="dd-lab dd-value"
-			onclick={() => (open = !open)}
+			onclick={toggleServices}
 		>
 			<span class="dd-value" id="dd-value" class:is-empty={!picked.length} data-empty={emptyLabel}>
 				{summary}
@@ -138,6 +182,48 @@
 				<span class="dd-count mono">{picked.length} selected</span>
 				<button type="button" class="dd-done" onclick={() => (open = false)}>Done</button>
 			</div>
+		</fieldset>
+	</div>
+	<div class="dd" id="dd-stage" bind:this={stageRoot}>
+		<span class="dd-label" id="dd-stage-lab">What stage are you at?</span>
+		<button
+			type="button"
+			class="dd-trigger"
+			aria-haspopup="true"
+			aria-expanded={stageOpen}
+			aria-controls="dd-stage-panel"
+			aria-labelledby="dd-stage-lab dd-stage-value"
+			onclick={toggleStage}
+		>
+			<span
+				class="dd-value"
+				id="dd-stage-value"
+				class:is-empty={!stage}
+				data-empty={emptyStage}
+			>
+				{stageSummary}
+			</span>
+			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+		</button>
+		<fieldset class="dd-panel" id="dd-stage-panel" hidden={!stageOpen}>
+			<legend class="dd-sr">Stage</legend>
+			<p class="dd-hint">Tell us a little about your project.</p>
+			{#each stages as item}
+				<label class="dd-opt">
+					<input
+						type="radio"
+						name="stage"
+						value={item.title}
+						checked={stage === item.title}
+						onchange={() => pickStage(item.title)}
+					/>
+					<span class="dd-txt">
+						<b>{item.title}</b>
+						<span>{item.detail}</span>
+					</span>
+					<i class="dd-check" aria-hidden="true"></i>
+				</label>
+			{/each}
 		</fieldset>
 	</div>
 	<label class="cf-field cf-msg" for="f-msg">
