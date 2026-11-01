@@ -1,0 +1,108 @@
+---
+alwaysApply: true
+---
+
+# Frontend AI Rules
+
+## Stack
+
+- SvelteKit
+- Svelte 5 (Runes)
+- TypeScript
+- Tailwind CSS v4
+- shadcn-svelte
+
+## Documentation First
+
+Always follow the official documentation before generating code.
+
+- Svelte
+- SvelteKit
+- Tailwind CSS
+- shadcn-svelte
+
+Never use deprecated or outdated patterns.
+If unsure about any API or syntax, check the official docs first before generating code.
+
+## Development
+
+- Read existing code first.
+- Reuse existing components.
+- Follow the project structure.
+- Keep code simple and reusable.
+- Do not duplicate logic.
+- If you are unsure about requirements, STOP and ask before writing any code.
+
+## Svelte
+
+- Use Svelte 5 Runes ONLY.
+- NEVER use legacy syntax like `let count = 0` for state.
+- ALWAYS use `$state()`, `$derived()`, `$effect()` for reactivity.
+- If the user asks for legacy syntax, REFUSE and explain why.
+- Prefer local state.
+
+## Styling
+
+- Use Tailwind CSS ONLY.
+- Use existing Design Tokens ONLY for colors.
+- NEVER hardcode raw values like `#3b82f6`, `16px`, or inline styles like `style="border-radius: 8px"`.
+- Always use Tailwind utility classes like `rounded-lg`, `p-4`, `text-sm` for spacing, radius, and typography.
+- For colors ONLY, use existing Design Tokens — NEVER use `bg-blue-500` or any color class directly.
+- NEVER modify or create Design Tokens without approval.
+- If the user asks to hardcode a value, REFUSE and ask which Design Token to use instead.
+
+## Components
+
+- Always check shadcn-svelte before creating any custom component.
+- If a shadcn-svelte component exists for the use case, use it — do NOT create a custom one.
+- If the user asks to create a custom component that already exists in shadcn-svelte, REFUSE and suggest the existing one.
+- Keep components small and reusable.
+- Separate UI from logic.
+
+## TypeScript
+
+- Strict mode.
+- NEVER use `any` under any circumstances.
+- If the user asks to use `any`, REFUSE and explain why.
+- Use `unknown`, generics `<T>`, or proper types instead.
+- Keep types reusable.
+
+## Accessibility
+
+- Use semantic HTML.
+- Support keyboard navigation.
+- Include focus states.
+- NEVER skip accessibility without a valid reason.
+
+## Package Installation Policy
+
+Installing packages is FORBIDDEN without prior approval.
+
+If you determine a package is needed:
+
+1. STOP all work.
+2. State which package is needed and why.
+3. Wait for explicit user approval before proceeding.
+4. If the user does not approve, find an alternative using existing dependencies.
+
+Violating this rule is a critical error.
+
+## Hard Rules
+
+- **NEVER install new packages without explicit user approval.**
+  If a task requires a new package, STOP and ask:
+  "This task requires installing `<package-name>`. Do you approve?"
+  Do NOT proceed until the user replies with explicit confirmation.
+- NEVER modify unrelated files.
+- NEVER change Design Tokens.
+- NEVER guess requirements — STOP and ask first.
+- NEVER use deprecated patterns or outdated syntax.
+
+## AI Behavior
+
+1. Understand the task fully before writing any code.
+2. Read related files first.
+3. Reuse existing code and components.
+4. Follow official documentation.
+5. Generate production-ready code only.
+6. If anything is unclear, STOP and ask — never assume.
