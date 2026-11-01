@@ -1,20 +1,27 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte';
+	import { page } from '$app/state';
 	import { city, contactEmail, contactPhone, contactPhoneHref } from '#lib/seo.ts';
+	import { homeHref, homeRoot } from '#lib/home-href.ts';
 	import { getLenis } from '#lib/smooth-scroll.ts';
 	import LogoMark from './LogoMark.svelte';
 	import ThemeSwitcher from './ThemeSwitcher.svelte';
 
 	const isDev = import.meta.env.DEV;
-	const items = [
-		{ href: '#services', label: 'Services' },
-		{ href: '#stack', label: 'Stack' },
-		{ href: '#approach', label: 'Approach' },
-		{ href: '#process', label: 'Process' },
-		{ href: '#work', label: 'Work' },
-		{ href: '#about', label: 'About' },
-		{ href: '#faq', label: 'FAQ' }
-	] as const;
+	const path = $derived(page.url.pathname);
+	const items = $derived(
+		(
+			[
+				{ hash: '#services', label: 'Services' },
+				{ hash: '#stack', label: 'Stack' },
+				{ hash: '#approach', label: 'Approach' },
+				{ hash: '#process', label: 'Process' },
+				{ hash: '#work', label: 'Work' },
+				{ hash: '#about', label: 'About' },
+				{ hash: '#faq', label: 'FAQ' }
+			] as const
+		).map((item) => ({ ...item, href: homeHref(path, item.hash) }))
+	);
 
 	let menuOpen = $state(false);
 	let panelHidden = $state(true);
@@ -100,20 +107,20 @@
 
 <header class="nav" bind:this={navEl}>
 	<div class="in">
-		<a class="logo" href="#top" aria-label="Zentaris home">
+		<a class="logo" href={homeRoot(path)} aria-label="Zentaris home">
 			<LogoMark />
 			<span>ZENTARIS</span>
 		</a>
 		<nav class="links" aria-label="Main">
-			<a href="#services">Services</a>
-			<a href="#approach">Approach</a>
-			<a href="#process">Process</a>
-			<a href="#work">Work</a>
-			<a href="#faq">FAQ</a>
+			<a href={homeHref(path, '#services')}>Services</a>
+			<a href={homeHref(path, '#approach')}>Approach</a>
+			<a href={homeHref(path, '#process')}>Process</a>
+			<a href={homeHref(path, '#work')}>Work</a>
+			<a href={homeHref(path, '#faq')}>FAQ</a>
 			{#if isDev}
 				<ThemeSwitcher />
 			{/if}
-			<a class="btn btn-2" href="#contact">Book a call</a>
+			<a class="btn btn-2" href={homeHref(path, '#contact')}>Book a call</a>
 			<button
 				class="hb-btn"
 				id="hb-btn"
@@ -142,7 +149,7 @@
 		</ul>
 	</nav>
 	<div class="hb-foot">
-		<a class="btn btn-teal hb-cta" href="#contact" onclick={() => setMenu(false)}>
+		<a class="btn btn-teal hb-cta" href={homeHref(path, '#contact')} onclick={() => setMenu(false)}>
 			Book a free 30-minute call
 		</a>
 		<p class="mono hb-meta">

@@ -18,9 +18,17 @@
 	let { children }: LayoutProps = $props();
 
 	const showDemos = $derived(page.url.pathname.startsWith('/demo'));
+	const isError = $derived(page.status >= 400);
 	const canonical = $derived(canonicalUrl(page.url));
 	const image = $derived(absoluteUrl(page.url, '/logo/zentaris-icon-teal-512.png'));
-	const robots = $derived(showDemos ? 'noindex, nofollow' : 'index, follow');
+	const robots = $derived(showDemos || isError ? 'noindex, nofollow' : 'index, follow');
+	const title = $derived(
+		page.status === 404
+			? 'Page not found — Zentaris'
+			: isError
+				? 'Something went wrong — Zentaris'
+				: defaultTitle
+	);
 	const orgJson = $derived(JSON.stringify(organizationSchema(page.url)));
 
 	onMount(() => {
@@ -34,7 +42,7 @@
 </script>
 
 <svelte:head>
-	<title>{defaultTitle}</title>
+	<title>{title}</title>
 	<meta name="description" content={defaultDescription} />
 	<meta name="robots" content={robots} />
 	<meta name="author" content={siteName} />

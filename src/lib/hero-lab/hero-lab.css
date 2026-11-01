@@ -6119,3 +6119,52 @@ html.hb-open .nav {
 		animation: none;
 	}
 }
+
+/* Hallmark · pre-emit critique: P4 H5 E5 S5 R4 V4
+ * Error pages: Orchid wayfinding, Assembly restraint, Remote dual CTA.
+ * DNA stays Hero Lab — no new palette, no mascot, no giant chromatic 404. */
+.err {
+	min-height: calc(100svh - 68px);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding: clamp(3rem, 10vw, 7rem) 0 clamp(4rem, 8vw, 6rem);
+	border-top: 1px solid var(--rule);
+}
+.err-inner {
+	max-width: 40rem;
+	min-width: 0;
+}
+.err h1 {
+	margin: 0.6rem 0 0;
+	font-style: normal;
+	overflow-wrap: anywhere;
+	min-width: 0;
+}
+.err .lede {
+	margin: 1.1rem 0 0;
+	max-width: 42ch;
+	color: var(--muted);
+}
+.err-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	margin-top: 1.8rem;
+}
+.err-jump {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem 1.5rem;
+	margin-top: 2.4rem;
+	padding-top: 1.4rem;
+	border-top: 1px solid var(--rule);
+}
+.err-jump a {
+	color: var(--muted);
+	text-decoration: none;
+	font-size: 0.9rem;
+}
+.err-jump a:hover {
+	color: var(--text);
+}

@@ -30,7 +30,7 @@
 						preload="metadata"
 						aria-hidden="true"
 					>
-						<source src="/work/zentaris-work-akiiko.mp4" type="video/mp4" />
+						<source src="https://pub-9bad6628b9994d858bae5fb586e1a46d.r2.dev/zentaris-video/zentaris-work-akiiko.mp4" type="video/mp4" />
 					</video>
 					<enhanced:img
 						class="wk2-poster"
@@ -67,7 +67,7 @@
 						preload="metadata"
 						aria-hidden="true"
 					>
-						<source src="/work/zentaris-work-royalfurr.mp4" type="video/mp4" />
+						<source src="https://pub-9bad6628b9994d858bae5fb586e1a46d.r2.dev/zentaris-video/zentaris-work-royalfurr.mp4" type="video/mp4" />
 					</video>
 					<enhanced:img
 						class="wk2-poster"
@@ -104,7 +104,7 @@
 						preload="metadata"
 						aria-hidden="true"
 					>
-						<source src="/work/zentaris-work-aatchiyar-dashboard.mp4" type="video/mp4" />
+						<source src="https://pub-9bad6628b9994d858bae5fb586e1a46d.r2.dev/zentaris-video/zentaris-work-aatchiyar-dashboard.mp4" type="video/mp4" />
 					</video>
 					<enhanced:img
 						class="wk2-poster"

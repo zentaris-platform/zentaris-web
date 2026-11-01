@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="robots" content="noindex, nofollow" />
+		<title>%sveltekit.status% — Zentaris</title>
+		<style>
+			:root {
+				--bg: #161616;
+				--text: #f2f0ed;
+				--muted: #9a9893;
+				--teal: #00e5c8;
+				--on-teal: #161616;
+				--rule: #2c2c2c;
+				--guide: clamp(12px, 5vw, 64px);
+				--pad: clamp(20px, 8vw, 104px);
+				--display: 'Sora', 'Segoe UI', system-ui, sans-serif;
+				--body: 'Inter', system-ui, sans-serif;
+				--mono: 'IBM Plex Mono', ui-monospace, monospace;
+			}
+			@media (prefers-color-scheme: light) {
+				:root {
+					--bg: #e7e3e0;
+					--text: #161616;
+					--muted: #66625c;
+					--rule: #cfcac4;
+				}
+			}
+			html,
+			body {
+				margin: 0;
+				min-height: 100%;
+				background: var(--bg);
+				color: var(--text);
+				font: 400 16px/1.6 var(--body);
+			}
+			html,
+			body {
+				overflow-x: clip;
+			}
+			main {
+				min-height: 100svh;
+				padding: clamp(3rem, 10vw, 7rem) var(--pad);
+				background-image:
+					linear-gradient(var(--rule), var(--rule)), linear-gradient(var(--rule), var(--rule));
+				background-size:
+					1px 100%,
+					1px 100%;
+				background-position:
+					var(--guide) 0,
+					calc(100% - var(--guide)) 0;
+				background-repeat: no-repeat;
+			}
+			p.mono {
+				font-family: var(--mono);
+				font-size: 0.75rem;
+				letter-spacing: 0.06em;
+				text-transform: uppercase;
+				margin: 0;
+			}
+			h1 {
+				font-family: var(--display);
+				font-style: normal;
+				font-weight: 600;
+				overflow-wrap: anywhere;
+				min-width: 0;
+				margin: 0.6rem 0 0;
+			}
+			.lede {
+				color: var(--muted);
+				max-width: 42ch;
+				margin: 1.1rem 0 0;
+			}
+			a {
+				display: inline-flex;
+				align-items: center;
+				min-height: 44px;
+				margin-top: 1.8rem;
+				padding: 0 1.1rem;
+				background: var(--teal);
+				color: var(--on-teal);
+				text-decoration: none;
+				border-radius: 2px;
+				font: 500 0.9rem/1 var(--body);
+			}
+		</style>
+	</head>
+	<body>
+		<main>
+			<p class="mono">%sveltekit.status%</p>
+			<h1>Something went wrong on our side.</h1>
+			<p class="lede">%sveltekit.error.message%</p>
+			<a href="/">Go home</a>
+		</main>
+	</body>
+</html>
