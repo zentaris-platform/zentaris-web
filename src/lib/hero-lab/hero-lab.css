@@ -1019,10 +1019,11 @@ svg .s-cubetext {
 }
 .cf-modal {
 	width: min(34rem, calc(100vw - 1.5rem));
-	max-height: min(90vh, 52rem);
-	overflow: auto;
-	overscroll-behavior: contain;
+	max-height: none;
+	height: fit-content;
+	overflow: visible;
 	margin: auto;
+	transform-origin: center center;
 	border: 1px solid var(--rule);
 	background: var(--surface);
 	color: var(--text);

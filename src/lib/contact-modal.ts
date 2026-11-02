@@ -5,13 +5,15 @@ let pending = false;
 let locked = false;
 let lockY = 0;
 
-function isInsideDialog(target: EventTarget | null): boolean {
-	return target instanceof Node && Boolean(dialog?.contains(target));
+function panelCanScroll(target: EventTarget | null): boolean {
+	if (!(target instanceof Element)) return false;
+	const panel = target.closest('.dd-panel');
+	return panel instanceof HTMLElement && panel.scrollHeight > panel.clientHeight + 1;
 }
 
 function onGuardScroll(event: Event): void {
 	if (!dialog?.open) return;
-	if (isInsideDialog(event.target)) return;
+	if (panelCanScroll(event.target)) return;
 	event.preventDefault();
 }
 
