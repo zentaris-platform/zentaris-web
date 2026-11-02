@@ -75,14 +75,36 @@
 		stageOpen = false;
 	}
 
+	function placePanel(host: HTMLElement | undefined) {
+		const panel = host?.querySelector('.dd-panel');
+		const trigger = host?.querySelector('.dd-trigger');
+		if (!(panel instanceof HTMLElement) || !(trigger instanceof HTMLElement)) return;
+		const gap = 12;
+		const rect = trigger.getBoundingClientRect();
+		const below = window.innerHeight - rect.bottom - gap;
+		const above = rect.top - gap;
+		const openUp = below < 220 && above > below;
+		const room = Math.max(140, Math.floor(openUp ? above : below));
+		panel.style.top = openUp ? 'auto' : '';
+		panel.style.bottom = openUp ? 'calc(100% + 8px)' : '';
+		panel.style.maxHeight = `${room}px`;
+	}
+
+	function placeOpenPanels() {
+		if (open) placePanel(root);
+		if (stageOpen) placePanel(stageRoot);
+	}
+
 	function toggleServices() {
 		open = !open;
 		if (open) stageOpen = false;
+		if (open) requestAnimationFrame(placeOpenPanels);
 	}
 
 	function toggleStage() {
 		stageOpen = !stageOpen;
 		if (stageOpen) open = false;
+		if (stageOpen) requestAnimationFrame(placeOpenPanels);
 	}
 
 	function onReset() {
@@ -103,11 +125,18 @@
 			if (open) open = false;
 			if (stageOpen) stageOpen = false;
 		}
+		function onResize() {
+			requestAnimationFrame(placeOpenPanels);
+		}
 		document.addEventListener('click', onDocClick);
 		document.addEventListener('keydown', onKey);
+		window.addEventListener('resize', onResize);
+		window.visualViewport?.addEventListener('resize', onResize);
 		return () => {
 			document.removeEventListener('click', onDocClick);
 			document.removeEventListener('keydown', onKey);
+			window.removeEventListener('resize', onResize);
+			window.visualViewport?.removeEventListener('resize', onResize);
 		};
 	});
 </script>
@@ -162,7 +191,7 @@
 		<fieldset class="dd-panel" id="dd-panel" hidden={!open}>
 			<legend class="dd-sr">Services</legend>
 			<p class="dd-hint">Select one or more areas where you need our expertise.</p>
-			{#each services as item}
+			{#each services as item (item.title)}
 				<label class="dd-opt">
 					<input
 						type="checkbox"
@@ -208,7 +237,7 @@
 		<fieldset class="dd-panel" id="dd-stage-panel" hidden={!stageOpen}>
 			<legend class="dd-sr">Stage</legend>
 			<p class="dd-hint">Tell us a little about your project.</p>
-			{#each stages as item}
+			{#each stages as item (item.title)}
 				<label class="dd-opt">
 					<input
 						type="radio"
