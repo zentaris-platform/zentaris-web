@@ -16,6 +16,14 @@
 			rel="stylesheet"
 			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap"
 		/>
+		<!-- Hide the hero copy before first paint when its scroll reveal will run (see enhance.ts) -->
+		<script>
+			if (
+				matchMedia('(max-width: 760px)').matches &&
+				!matchMedia('(prefers-reduced-motion: reduce)').matches
+			)
+				document.documentElement.classList.add('hx-pre');
+		</script>
 		<!-- Google tag (gtag.js) -->
 		<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZCMMQM0P0X"></script>
 		<script>

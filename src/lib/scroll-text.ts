@@ -37,6 +37,8 @@ function wrapWords(el: HTMLElement): void {
 	el.dataset.st = '1';
 }
 
+const painted = new WeakMap<HTMLElement, string>();
+
 function paint(lines: HTMLElement[]): void {
 	const vh = window.innerHeight;
 	const start = vh * 0.9;
@@ -50,8 +52,11 @@ function paint(lines: HTMLElement[]): void {
 		const p = clamp((start - y) / (start - end));
 		const span = Math.max(2.2, n * 0.18);
 		words.forEach((word, i) => {
-			const local = clamp((p * (n + span) - i) / span);
-			word.style.setProperty('--st', local.toFixed(3));
+			// most words sit at 0 or 1; skip the write (and its style invalidation) when unchanged
+			const local = clamp((p * (n + span) - i) / span).toFixed(3);
+			if (painted.get(word) === local) return;
+			painted.set(word, local);
+			word.style.setProperty('--st', local);
 		});
 	}
 }

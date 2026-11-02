@@ -38,7 +38,10 @@ function asKey<T extends string>(value: string | null, keys: readonly T[]): T | 
 	return (keys as readonly string[]).includes(value) ? (value as T) : null;
 }
 
-export function enhanceHeroLab() {
+/** Returns a teardown that removes window listeners and stops the animation loops. */
+export function enhanceHeroLab(): () => void {
+	const ac = new AbortController();
+	const { signal } = ac;
 	(function () {
 		const links = [...document.querySelectorAll<HTMLAnchorElement>('.svc-index a')];
 		const panels = links
@@ -303,8 +306,12 @@ export function enhanceHeroLab() {
 		const base: SVGElement = baseEl;
 		const spot: SVGElement = spotEl;
 		const reduce = prefersReducedMotion();
+		let bw = -1;
+		let bh = -1;
 		function build() {
 			const r = bg.getBoundingClientRect();
+			bw = r.width;
+			bh = r.height;
 			const wide = r.width > 960;
 			let hw = wide ? 58 : 40;
 			let hh = hw * 0.57735;
@@ -387,12 +394,22 @@ export function enhanceHeroLab() {
 		}
 		window.__heroGridBuild = build;
 		build();
-		addEventListener('load', build);
+		addEventListener('load', build, { signal });
+		// iOS Safari fires resize while its toolbar slides during a scroll; rebuilding the
+		// lattice then is a long main-thread hitch, so only rebuild when the box really changed
 		let rt: ReturnType<typeof setTimeout>;
-		addEventListener('resize', function () {
-			clearTimeout(rt);
-			rt = setTimeout(build, 150);
-		});
+		addEventListener(
+			'resize',
+			function () {
+				clearTimeout(rt);
+				rt = setTimeout(function () {
+					const r = bg.getBoundingClientRect();
+					if (r.width !== bw || r.height !== bh) build();
+				}, 150);
+			},
+			{ signal }
+		);
+		signal.addEventListener('abort', () => clearTimeout(rt));
 		if (!reduce && window.matchMedia('(pointer: fine)').matches) {
 			hero.addEventListener('pointermove', function (e) {
 				const r = bg.getBoundingClientRect();
@@ -746,17 +763,31 @@ export function enhanceHeroLab() {
 			paused = false;
 		});
 		if ('IntersectionObserver' in window) {
-			new IntersectionObserver(function (es) {
+			const io = new IntersectionObserver(function (es) {
 				visible = es[0].isIntersecting;
-			}).observe(svg);
+			});
+			io.observe(svg);
+			signal.addEventListener('abort', () => io.disconnect());
 		}
+		// one loop at most; it stops while scroll drives the timeline (__stackPause) and only
+		// redraws when the time actually advanced, so a still or scroll-locked stack costs nothing
+		let raf = 0;
 		function frame(now: number) {
+			raf = 0;
+			if (signal.aborted || loopLocked) return;
 			if (last === null) last = now;
 			const dt = Math.min(0.05, (now - last) / 1000);
 			last = now;
-			if (!paused && !loopLocked && visible) acc = (acc + dt) % LOOP;
-			render(acc);
-			requestAnimationFrame(frame);
+			if (!paused && visible) {
+				acc = (acc + dt) % LOOP;
+				render(acc);
+			}
+			raf = requestAnimationFrame(frame);
+		}
+		function start() {
+			if (raf || loopLocked || signal.aborted) return;
+			last = null;
+			raf = requestAnimationFrame(frame);
 		}
 		window.__stackSeek = function (t) {
 			acc = t;
@@ -764,10 +795,19 @@ export function enhanceHeroLab() {
 		};
 		window.__stackPause = function (on) {
 			loopLocked = on;
+			if (on && raf) {
+				cancelAnimationFrame(raf);
+				raf = 0;
+			} else start();
 		};
 		window.__stackPhases = A;
+		signal.addEventListener('abort', function () {
+			if (raf) cancelAnimationFrame(raf);
+			raf = 0;
+		});
 		render(0);
-		requestAnimationFrame(frame);
+		render(acc);
+		start();
 	})();
 	(function () {
 		const scenes = [...document.querySelectorAll<HTMLElement>('.svc-scene, .ap-min, .ap-ext')];
@@ -906,13 +946,15 @@ export function enhanceHeroLab() {
 		});
 	})();
 	(function () {
+		// app.html hides the copy before first paint; drop that once .hx-scroll owns it or won't run
+		const releasePre = () => document.documentElement.classList.remove('hx-pre');
 		const sec = document.querySelector<HTMLElement>('.hero-x');
-		if (!sec) return;
+		if (!sec) return releasePre();
 		const grid = sec.querySelector<HTMLElement>('.hx-grid');
 		const art = sec.querySelector<HTMLElement>('.hx-art');
 		const copy = sec.querySelector<HTMLElement>('.hx-copy');
 		const nav = document.querySelector<HTMLElement>('.nav');
-		if (!grid || !art || !copy) return;
+		if (!grid || !art || !copy) return releasePre();
 		const kids = [...copy.children] as HTMLElement[];
 		const h1b = copy.querySelector<HTMLElement>('h1 .h1-2');
 		const reduce = prefersReducedMotion();
@@ -934,6 +976,7 @@ export function enhanceHeroLab() {
 			if (on || !phases()) return;
 			on = true;
 			sec.classList.add('hx-scroll');
+			releasePre();
 			sec.style.setProperty('--hx-scrim', '0');
 			window.__stackPause?.(true);
 			hint = document.createElement('div');
@@ -947,26 +990,28 @@ export function enhanceHeroLab() {
 			grid.appendChild(steps);
 			window.__heroGridBuild?.();
 			measure();
-			update();
+			update(true);
 			requestAnimationFrame(function () {
 				if (!on) return;
 				measure();
-				update();
+				update(true);
 			});
 			if (document.fonts?.ready) {
 				void document.fonts.ready.then(function () {
-					if (!on) return;
+					if (!on || signal.aborted) return;
 					window.__heroGridBuild?.();
 					measure();
-					update();
+					update(true);
 				});
 			}
 		}
 		function disable() {
 			if (!on) return;
 			on = false;
+			if (sraf) cancelAnimationFrame(sraf);
+			sraf = 0;
+			scrim = '';
 			sec.classList.remove('hx-scroll');
-			sec.style.removeProperty('--hx-h');
 			sec.style.removeProperty('--hx-scrim');
 			sec.style.removeProperty('--hx-top');
 			art.style.transform = '';
@@ -985,14 +1030,16 @@ export function enhanceHeroLab() {
 		let AH = 0;
 		let CH = 0;
 		let TOP = 60;
+		// Heights come from the sticky stage (100svh - nav) and the section (260svh in CSS), never
+		// innerHeight: iOS Safari changes innerHeight as its toolbar slides mid-scroll, which used
+		// to resize the section and jump the scroll progress under the finger.
 		function measure() {
 			TOP = nav ? nav.getBoundingClientRect().height : 60;
 			sec.style.setProperty('--hx-top', TOP + 'px');
-			H = window.innerHeight - TOP;
+			H = grid.clientHeight;
 			const scale = parseFloat((art.style.transform.match(/scale\(([\d.]+)\)/) || [0, '1'])[1]) || 1;
 			AH = art.getBoundingClientRect().height / scale || 1;
 			CH = copy.getBoundingClientRect().height;
-			sec.style.setProperty('--hx-h', window.innerHeight * 2.6 + 'px');
 		}
 		function clamp(v: number) {
 			return v < 0 ? 0 : v > 1 ? 1 : v;
@@ -1000,11 +1047,38 @@ export function enhanceHeroLab() {
 		function ease(u: number) {
 			return u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
 		}
-		function update() {
+		// Native touch scroll stays untouched (Lenis is desktop only); the reveal instead eases
+		// toward the scroll position at Lenis's desktop lerp, so it feels as smooth on a phone.
+		let target = 0;
+		let cur = 0;
+		let sraf = 0;
+		let last = 0;
+		let scrim = '';
+		function update(snap = false) {
 			if (!on) return;
 			const r = sec.getBoundingClientRect();
-			const span = r.height - (window.innerHeight - TOP);
-			const p = clamp((TOP - r.top) / Math.max(1, span));
+			target = clamp((TOP - r.top) / Math.max(1, r.height - H));
+			if (snap) {
+				if (sraf) cancelAnimationFrame(sraf);
+				sraf = 0;
+				cur = target;
+				apply(cur);
+			} else if (!sraf) {
+				last = performance.now();
+				sraf = requestAnimationFrame(follow);
+			}
+		}
+		function follow(now: number) {
+			sraf = 0;
+			if (!on || signal.aborted) return;
+			const dt = Math.min(0.1, (now - last) / 1000);
+			last = now;
+			cur += (target - cur) * (1 - Math.pow(1 - 0.18, dt * 60));
+			if (Math.abs(target - cur) < 0.0005) cur = target;
+			apply(cur);
+			if (cur !== target) sraf = requestAnimationFrame(follow);
+		}
+		function apply(p: number) {
 			const tp = clamp(p / 0.62);
 			window.__stackSeek?.(tp * T_END);
 			const m = ease(clamp((p - 0.55) / 0.17));
@@ -1018,7 +1092,8 @@ export function enhanceHeroLab() {
 			const y = y0 + (4 - y0) * m;
 			art.style.transform = 'translateY(' + y.toFixed(1) + 'px) scale(' + s.toFixed(4) + ')';
 			art.style.opacity = hide ? (1 - clamp((p - 0.62) / 0.1)).toFixed(3) : '1';
-			sec.style.setProperty('--hx-scrim', clamp((p - 0.66) / 0.06).toFixed(3));
+			const sc = clamp((p - 0.66) / 0.06).toFixed(3);
+			if (sc !== scrim) sec.style.setProperty('--hx-scrim', (scrim = sc));
 			seq.forEach(function (e, i) {
 				e.classList.toggle('on', p >= 0.7 + i * 0.045);
 			});
@@ -1035,22 +1110,38 @@ export function enhanceHeroLab() {
 		function check() {
 			if (mq.matches && !reduce) {
 				if (!on && !phases()) {
+					if (signal.aborted) return;
 					if (wait++ < 90) requestAnimationFrame(check);
+					else releasePre();
 					return;
 				}
 				enable();
-			} else disable();
-		}
-		onSmoothScroll(update);
-		window.addEventListener('resize', function () {
-			check();
-			if (on) {
-				measure();
-				update();
+			} else {
+				releasePre();
+				disable();
 			}
+		}
+		const offScroll = onSmoothScroll(() => update());
+		signal.addEventListener('abort', function () {
+			offScroll();
+			if (sraf) cancelAnimationFrame(sraf);
+			sraf = 0;
 		});
-		mq.addEventListener('change', check);
+		window.addEventListener(
+			'resize',
+			function () {
+				check();
+				if (on) {
+					measure();
+					update();
+				}
+			},
+			{ signal }
+		);
+		mq.addEventListener('change', check, { signal });
 		check();
 	})();
-	enhanceScrollText();
+	const offScrollText = enhanceScrollText();
+	signal.addEventListener('abort', offScrollText);
+	return () => ac.abort();
 }
