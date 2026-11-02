@@ -1693,7 +1693,8 @@ footer a:hover {
 	overflow: hidden;
 	isolation: isolate;
 }
-.hero.hero-x.hero-grid.hx-scroll {
+.hero.hero-x.hero-grid.hx-scroll,
+.hx-pre .hero.hero-x.hero-grid {
 	overflow: clip;
 	clip-path: inset(0 calc(var(--guide) + 1px));
 }
@@ -5590,14 +5591,17 @@ section.pl {
 		height: 36px;
 	}
 }
-.hero-x.hx-scroll {
+.hero-x.hx-scroll,
+.hx-pre .hero-x {
 	height: var(--hx-h, 260svh);
 	overflow: clip;
 }
-.hero-grid.hx-scroll .hx-grid {
+.hero-grid.hx-scroll .hx-grid,
+.hx-pre .hero-grid .hx-grid {
 	padding-bottom: 0;
 }
-.hx-scroll .hx-grid {
+.hx-scroll .hx-grid,
+.hx-pre .hero-x .hx-grid {
 	position: sticky;
 	top: var(--hx-top, 60px);
 	height: calc(100svh - var(--hx-top, 60px));
@@ -5606,7 +5610,8 @@ section.pl {
 	display: block;
 	overflow: clip;
 }
-.hx-scroll .hx-art {
+.hx-scroll .hx-art,
+.hx-pre .hero-x .hx-art {
 	position: absolute;
 	left: var(--pad);
 	right: var(--pad);
@@ -5615,13 +5620,15 @@ section.pl {
 	transform-origin: 50% 0;
 	will-change: transform;
 }
-.hx-scroll .hx-art svg {
+.hx-scroll .hx-art svg,
+.hx-pre .hero-x .hx-art svg {
 	display: block;
 	width: 100%;
 	height: auto;
 	max-height: none;
 }
-.hx-scroll .hx-copy {
+.hx-scroll .hx-copy,
+.hx-pre .hero-x .hx-copy {
 	position: absolute;
 	left: var(--pad);
 	right: var(--pad);
@@ -5641,7 +5648,8 @@ section.pl {
 	transition: opacity 0.4s ease;
 	pointer-events: none;
 }
-.hx-scroll .hg-bg {
+.hx-scroll .hg-bg,
+.hx-pre .hero-x .hg-bg {
 	opacity: 0.55;
 	left: calc(var(--guide) + 1px);
 	right: calc(var(--guide) + 1px);
@@ -5660,6 +5668,33 @@ section.pl {
 	transition:
 		opacity 0.45s ease,
 		transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+/* pre-paint mirror of the scroll-mode start state (copy hidden, art centred, stack
+   collapsed to the chip as render(0) in enhance.ts draws it), until .hx-scroll takes over */
+.hx-pre .hero-x {
+	/* .nav .in min-height + its 1px border, as measure() reads it */
+	--hx-top: 69px;
+}
+.hx-pre .hero-x .hx-art {
+	top: 50%;
+	transform: translateY(-50%);
+}
+.hx-pre .hero-x .iso-stack .plate-wrap:has(#m-market),
+.hx-pre .hero-x .iso-stack .plate-wrap:has(#m-brand),
+.hx-pre .hero-x .iso-stack :is(.gap, .layer-tags, .tag, .tag-lead) {
+	opacity: 0;
+}
+/* (Z.core - TH) * U: the core dropped onto the launch plate */
+.hx-pre .hero-x .iso-stack .plate-wrap:has(#m-core) {
+	transform: translateY(282.5px);
+}
+.hx-pre .hero-x .hx-copy > * {
+	opacity: 0;
+	transform: translateY(16px);
+}
+.hx-pre .hero-x .hx-copy h1 .h1-2 {
+	opacity: 0;
+	transform: translateY(12px);
 }
 .hx-scroll .hx-copy > .on,
 .hx-scroll .hx-copy h1 .h1-2.on {

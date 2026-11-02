@@ -29,12 +29,15 @@
 	let closeTimer: ReturnType<typeof setTimeout> | undefined;
 	let lockY = 0;
 
+	let hbTop = '';
 	function setTop() {
 		if (!navEl) return;
-		document.documentElement.style.setProperty(
-			'--hb-top',
-			`${navEl.getBoundingClientRect().bottom}px`
-		);
+		// resize fires repeatedly on iOS as the toolbar slides; a root custom-property write
+		// restyles the whole page, so only write when the value really changed
+		const next = `${navEl.getBoundingClientRect().bottom}px`;
+		if (next === hbTop) return;
+		hbTop = next;
+		document.documentElement.style.setProperty('--hb-top', next);
 	}
 
 	function lockPage() {
